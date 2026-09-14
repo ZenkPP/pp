@@ -15,6 +15,7 @@ return [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@modules' => '@app/modules',
     ],
     'language' => 'en-US',
     'components' => [
@@ -32,7 +33,7 @@ return [
             'showScriptName' => true,
         ],
         'user' => [
-            'identityClass' => \app\models\User::class,
+            'identityClass' => modules\users\models\User::class,
         ],
         'request' => [
             'cookieValidationKey' => 'test',

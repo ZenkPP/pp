@@ -6,6 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
+    'language' => $_ENV['APP_LANGUAGE'] ?? 'en',
     'bootstrap' => ['log'],
     'container' => [
         'singletons' => [
@@ -20,6 +21,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+        '@modules' => '@app/modules',
     ],
     'components' => [
         'request' => [
@@ -30,7 +32,7 @@ $config = [
             'class' => \yii\caching\FileCache::class,
         ],
         'user' => [
-            'identityClass' => \app\models\User::class,
+            'identityClass' => modules\users\models\User::class,
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -47,6 +49,16 @@ $config = [
             ],
         ],
         'db' => $db,
+        'i18n' => [
+            'translations' => [
+                'orders' => [
+                    'class' => yii\i18n\PhpMessageSource::class,
+                    'sourceLanguage' => 'en',
+                    'forceTranslation' => true,
+                    'basePath' => '@modules/orders/messages',
+                ],
+            ],
+        ],
         'view' => [
             'class' => yii\web\View::class,
             'renderers' => [
@@ -59,14 +71,25 @@ $config = [
                 ],
             ],
         ],
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'pattern' => 'orders/<status:pending|inprogress|completed|canceled|error>',
+                    'route' => 'orders/order/index',
+                    'defaults' => ['status' => ''],
+                ],
             ],
         ],
-        */
+    ],
+    'modules' => [
+        'users' => [
+            'class' => modules\users\UsersModule::class,
+        ],
+        'orders' => [
+            'class' => modules\orders\OrdersModule::class,
+        ],
     ],
     'params' => $params,
 ];
