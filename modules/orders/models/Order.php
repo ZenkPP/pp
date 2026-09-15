@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace modules\orders\models;
 
+use modules\orders\providers\OrderProvider;
 use modules\users\models\User;
+use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -86,13 +90,19 @@ final class Order extends ActiveRecord
         );
     }
 
-    public function getStatusEnum(): OrderStatus
+    public function afterSave($insert, $changedAttributes): void
     {
-        return OrderStatus::from($this->status);
+        parent::afterSave($insert, $changedAttributes);
+
+        if ($insert) {
+            Yii::$app->cache->delete(OrderProvider::CACHE_ORDERS_COUNT);
+        }
     }
 
-    public function getModeEnum(): OrderMode
+    public function afterDelete(): void
     {
-        return OrderMode::from($this->mode);
+        parent::afterDelete();
+
+        Yii::$app->cache->delete(OrderProvider::CACHE_ORDERS_COUNT);
     }
 }

@@ -74,13 +74,7 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-                [
-                    'pattern' => 'orders/<status:pending|inprogress|completed|canceled|error>',
-                    'route' => 'orders/order/index',
-                    'defaults' => ['status' => ''],
-                ],
-            ],
+            'rules' => require __DIR__ . '/routes.php',
         ],
     ],
     'modules' => [

@@ -1,0 +1,157 @@
+{% set orders = orders|default([]) %}
+{% set pagination = pagination|default(null) %}
+{% set query = {status: '', service: '', mode: '', search: '', 'search-type': '1'}|merge(filters|default({})) %}
+{% set query = query|merge({mode: query.mode is null ? '' : query.mode}) %}
+{% set ordersRoute = ordersRoute|default('/orders/order/index') %}
+{% set searchParams = query.search is same as('') ? {} : {search: query.search, 'search-type': query['search-type']} %}
+{% set statusParams = {0: ordersRoute}|merge(searchParams) %}
+{% set filterParams = statusParams|merge({
+    status: query.status,
+    service: query.service,
+    mode: query.mode is same as('') ? null : query.mode
+}) %}
+{% set exportParams = {0: '/orders/export'}|merge(searchParams)|merge({
+    status: query.status,
+    service: query.service,
+    mode: query.mode is same as('') ? null : query.mode
+}) %}
+<!DOCTYPE html>
+<html lang="{{ app.language }}">
+<head>
+  <meta charset="{{ app.charset }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ t('orders', 'Orders') }}</title>
+  <link href="{{ app.request.baseUrl }}/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ app.request.baseUrl }}/css/custom.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-fixed-top navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar-collapse" aria-controls="bs-navbar-collapse" aria-expanded="false">
+        <span class="sr-only">{{ t('orders', 'Toggle navigation') }}</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="{{ path([ordersRoute]) }}">{{ t('orders', 'Orders') }}</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <ul class="nav nav-tabs p-b">
+    <li{% if query.status == '' %} class="active"{% endif %}><a href="{{ path(statusParams|merge({status: ''})) }}">{{ t('orders', 'All orders') }}</a></li>
+    {% for status in statuses|default([]) %}
+      <li{% if query.status == status.name|lower %} class="active"{% endif %}><a href="{{ path(statusParams|merge({status: status.name|lower})) }}">{{ t('orders', status.name) }}</a></li>
+    {% endfor %}
+    <li class="pull-right custom-search">
+      <form class="form-inline" action="{{ path({0: ordersRoute, status: query.status}) }}" method="get">
+        <div class="input-group">
+          <input type="text" name="search" class="form-control" value="{{ query.search }}" placeholder="{{ t('orders', 'Search orders') }}" aria-label="{{ t('orders', 'Search orders') }}">
+          <span class="input-group-btn search-select-wrap">
+            <select class="form-control search-select" name="search-type" aria-label="{{ t('orders', 'Search by') }}">
+              {% for value, label in {1: 'Order ID', 2: 'Link', 3: 'Username'} %}
+                <option value="{{ value }}"{% if query['search-type'] == value %} selected{% endif %}>{{ t('orders', label) }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-default" aria-label="{{ t('orders', 'Search') }}"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+          </span>
+        </div>
+      </form>
+    </li>
+    <li class="pull-right export-li">
+      <a class="export" href="{{ path(exportParams) }}">
+        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+        <span class="export-title">{{ t('orders', 'Save result') }}</span>
+      </a>
+    </li>
+  </ul>
+  <table class="table order-table">
+    <thead>
+    <tr>
+      <th>{{ t('orders', 'ID') }}</th>
+      <th>{{ t('orders', 'User') }}</th>
+      <th>{{ t('orders', 'Link') }}</th>
+      <th>{{ t('orders', 'Quantity') }}</th>
+      <th class="dropdown-th">
+        <div class="dropdown">
+          <button class="btn btn-th btn-default dropdown-toggle" type="button" id="service-filter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ t('orders', 'Service') }}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="service-filter">
+            <li{% if query.service == '' %} class="active"{% endif %}><a href="{{ path(filterParams|merge({service: null})) }}">{{ t('orders', 'All') }} ({{ serviceTotalCount|default(0) }})</a></li>
+            {% for service in services|default([]) %}
+              {% set disabled = service.count == 0 %}
+              <li class="{{ query.service == service.id ? 'active' : '' }}{{ disabled ? ' disabled' : '' }}">
+                <a{% if disabled %} aria-disabled="true" tabindex="-1"{% else %} href="{{ path(filterParams|merge({service: service.id})) }}"{% endif %}>
+                  <span class="label-id">{{ service.id }}</span> {{ service.name }} ({{ service.count }})
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </th>
+      <th>{{ t('orders', 'Status') }}</th>
+      <th class="dropdown-th">
+        <div class="dropdown">
+          <button class="btn btn-th btn-default dropdown-toggle" type="button" id="mode-filter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{ t('orders', 'Mode') }}
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="mode-filter">
+            <li{% if query.mode is same as('') %} class="active"{% endif %}><a href="{{ path(filterParams|merge({mode: null})) }}">{{ t('orders', 'All') }}</a></li>
+            {% for mode in modes|default([]) %}
+              <li{% if query.mode is not same as('') and query.mode == mode.value %} class="active"{% endif %}><a href="{{ path(filterParams|merge({mode: mode.value})) }}">{{ t('orders', mode.name) }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </th>
+      <th>{{ t('orders', 'Created') }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in orders %}
+      <tr>
+        <td>{{ order.id }}</td>
+        <td>{{ order.user.fullName|default('') }}</td>
+        <td class="link">{{ order.link }}</td>
+        <td>{{ order.quantity }}</td>
+        <td class="service"><span class="label-id">{{ order.service_id }}</span> {{ order.service.name|default('') }}</td>
+        <td>{{ t('orders', statuses[order.status].name|default('')) }}</td>
+        <td>{{ t('orders', modes[order.mode].name|default('')) }}</td>
+        <td><span class="nowrap">{{ app.formatter.asDate(order.created_at, 'php:Y-m-d') }}</span><span class="nowrap">{{ app.formatter.asTime(order.created_at, 'php:H:i:s') }}</span></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8" class="text-center">{{ t('orders', 'No orders found') }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% if pagination %}
+    <div class="row">
+      <div class="col-sm-8">
+        {% if pagination.pageCount > 1 %}
+          <nav aria-label="{{ t('orders', 'Orders pagination') }}">
+            {{ use('yii/widgets/LinkPager') }}
+            {{ link_pager_widget({pagination: pagination}) }}
+          </nav>
+        {% endif %}
+      </div>
+      <div class="col-sm-4 pagination-counters">
+        {{ t('orders', '{begin} to {end} of {total}', {
+            begin: pagination.totalCount > 0 ? pagination.offset + 1 : 0,
+            end: pagination.offset + orders|length,
+            total: pagination.totalCount
+        }) }}
+      </div>
+    </div>
+  {% endif %}
+</div>
+<script src="{{ app.request.baseUrl }}/js/jquery.min.js"></script>
+<script src="{{ app.request.baseUrl }}/js/bootstrap.min.js"></script>
+</body>
+</html>
