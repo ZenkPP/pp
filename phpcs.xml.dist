@@ -8,8 +8,12 @@
     <!-- directories to check -->
     <file>assets</file>
     <file>commands</file>
+    <file>config</file>
     <file>controllers</file>
     <file>mail</file>
-    <file>models</file>
-    <file>tests</file>
+    <file>migrations</file>
+    <file>modules</file>
+
+    <exclude-pattern>config/__autocomplete.php</exclude-pattern>
+    <exclude-pattern>migrations/*</exclude-pattern>
 </ruleset>

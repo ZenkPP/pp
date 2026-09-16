@@ -43,7 +43,7 @@ final readonly class OrderCsvExporter
                 $order->user->first_name . ' ' . $order->user->last_name,
                 $order->link,
                 $order->quantity,
-                $order->service?->name ?? '',
+                $order->service->name,
                 Yii::t('orders', OrderStatus::from($order->status)->name),
                 Yii::t('orders', OrderMode::from($order->mode)->name),
                 Yii::$app->formatter->asDatetime($order->created_at, 'php:Y-m-d H:i:s'),

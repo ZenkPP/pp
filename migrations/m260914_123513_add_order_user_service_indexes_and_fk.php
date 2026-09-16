@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use yii\db\Migration;
 
 class m260914_123513_add_order_user_service_indexes_and_fk extends Migration

@@ -6,11 +6,11 @@ namespace modules\orders\dto;
 
 use modules\orders\models\OrderSearchType;
 
-class OrderSearch
+final readonly class OrderSearch
 {
     public function __construct(
-        public ?string $search = null,
-        public ?OrderSearchType $searchType = null,
+        public string $search,
+        public OrderSearchType $searchType,
     ) {
     }
 }

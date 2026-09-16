@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use yii\db\Migration;
 
 class m260914_122834_create_order_user_service_table extends Migration

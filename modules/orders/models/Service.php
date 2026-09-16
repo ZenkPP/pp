@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace modules\orders\models;
 
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
  * @property int $id
  * @property string $name
- *
- * @property-read Order[] $orders
  */
 final class Service extends ActiveRecord
 {
@@ -24,13 +23,5 @@ final class Service extends ActiveRecord
             ['name', 'required'],
             ['name', 'string', 'max' => 300],
         ];
-    }
-
-    public function getOrders(): ActiveQuery
-    {
-        return $this->hasMany(
-            Order::class,
-            ['service_id' => 'id'],
-        );
     }
 }

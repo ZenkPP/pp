@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace modules\orders\models;
 
-use modules\orders\providers\OrderProvider;
+use modules\orders\providers\ServiceProvider;
 use modules\users\models\User;
 use Yii;
 use yii\db\ActiveQuery;
@@ -95,7 +95,7 @@ final class Order extends ActiveRecord
         parent::afterSave($insert, $changedAttributes);
 
         if ($insert) {
-            Yii::$app->cache->delete(OrderProvider::CACHE_ORDERS_COUNT);
+            Yii::$app->cache->delete(ServiceProvider::CACHE_SERVICE_COUNT);
         }
     }
 
@@ -103,6 +103,6 @@ final class Order extends ActiveRecord
     {
         parent::afterDelete();
 
-        Yii::$app->cache->delete(OrderProvider::CACHE_ORDERS_COUNT);
+        Yii::$app->cache->delete(ServiceProvider::CACHE_SERVICE_COUNT);
     }
 }

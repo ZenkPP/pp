@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace modules\orders\controllers;
 
 use modules\orders\mapper\OrderFilterMapper;
 use modules\orders\models\OrderMode;
 use modules\orders\models\OrderStatus;
 use modules\orders\providers\OrderProvider;
+use modules\orders\providers\ServiceProvider;
 use modules\orders\services\OrderCsvExporter;
 use Yii;
 use yii\data\Pagination;
@@ -19,6 +22,7 @@ class OrderController extends Controller
         $id,
         $module,
         private readonly OrderProvider $orderProvider,
+        private readonly ServiceProvider $serviceProvider,
         private readonly OrderFilterMapper $orderFilterMapper,
         private readonly OrderCsvExporter $orderCsvExporter,
         $config = [],
@@ -50,8 +54,8 @@ class OrderController extends Controller
             ],
             'orders' => $this->orderProvider->getOrders($orderFilter, $pagination),
             'pagination' => $pagination,
-            'serviceTotalCount' => $this->orderProvider->countOrdersForServices($orderFilter),
-            'services' => $this->orderProvider->getServices($orderFilter),
+            'serviceTotalCount' => $this->serviceProvider->countOrdersForServices($orderFilter),
+            'services' => $this->serviceProvider->getServices($orderFilter),
         ]);
     }
 

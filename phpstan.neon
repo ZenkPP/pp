@@ -4,19 +4,12 @@ parameters:
     paths:
         - assets
         - commands
+        - config
         - controllers
         - mail
-        - models
+        - migrations
+        - modules
         - widgets
-        - tests/Acceptance
-        - tests/Functional
-        - tests/Unit
-
-    scanDirectories:
-        - tests/Support
-
-    bootstrapFiles:
-        - tests/_bootstrap.php
 
     dynamicConstantNames:
         - YII_DEBUG
@@ -26,6 +19,9 @@ parameters:
         - YII_ENV_TEST
 
     ignoreErrors:
-        - '#Unsafe usage of new static\(\).#'
+        -
+            message: '#Call to an undefined static method Yii::t\(\).#'
+            path: modules/orders/services/OrderCsvExporter.php
+
 
     tmpDir: %currentWorkingDirectory%/runtime

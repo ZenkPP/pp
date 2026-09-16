@@ -7,7 +7,7 @@ namespace modules\orders\dto;
 use modules\orders\models\OrderMode;
 use modules\orders\models\OrderStatus;
 
-class OrderFilter
+final readonly class OrderFilter
 {
     public function __construct(
         public ?OrderStatus $status = null,
