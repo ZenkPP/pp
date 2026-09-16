@@ -13,11 +13,17 @@ use yii\db\ActiveRecord;
  */
 final class User extends ActiveRecord
 {
+    /**
+     * @return string
+     */
     public static function tableName(): string
     {
         return '{{%users}}';
     }
 
+    /**
+     * @return array
+     */
     public function rules(): array
     {
         return [
@@ -26,6 +32,9 @@ final class User extends ActiveRecord
         ];
     }
 
+    /**
+     * @return string
+     */
     public function getFullName(): string
     {
         return trim($this->first_name . ' ' . $this->last_name);

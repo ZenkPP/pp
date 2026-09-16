@@ -12,6 +12,11 @@ enum OrderStatus: int
     case Canceled = 3;
     case Error = 4;
 
+    /**
+     * @param string $orderStatus
+     * @return self
+     * @throws \InvalidArgumentException
+     */
     public static function fromString(string $orderStatus): self
     {
         return match (strtolower($orderStatus)) {

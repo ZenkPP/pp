@@ -6,7 +6,7 @@ return [
         'route' => 'orders/order/export',
     ],
     [
-        'pattern' => 'orders/<status:pending|inprogress|completed|canceled|error>',
+        'pattern' => 'orders/<status>',
         'route' => 'orders/order/index',
         'defaults' => ['status' => ''],
     ],

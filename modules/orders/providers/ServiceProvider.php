@@ -12,14 +12,18 @@ use Yii;
 class ServiceProvider
 {
     public const CACHE_SERVICE_COUNT = 'CACHE_SERVICE_COUNT';
-    private const CACHE_SERVICE_COUNT_LIMIT = 600;
+    private const CACHE_SERVICE_COUNT_TTL = 600;
 
+    /**
+     * @param OrderQueryBuilder $orderQueryBuilder
+     */
     public function __construct(
         private readonly OrderQueryBuilder $orderQueryBuilder,
     ) {
     }
 
     /**
+     * @param OrderFilter $orderFilter
      * @return list<array{id: int, name: string, count: int}>
      */
     public function getServices(OrderFilter $orderFilter): array
@@ -54,6 +58,10 @@ class ServiceProvider
             ->all();
     }
 
+    /**
+     * @param OrderFilter $orderFilter
+     * @return int
+     */
     public function countOrdersForServices(OrderFilter $orderFilter): int
     {
         if (
@@ -63,7 +71,7 @@ class ServiceProvider
         ) {
             return Yii::$app->cache->getOrSet(self::CACHE_SERVICE_COUNT, function () {
                 return Order::find()->count();
-            }, self::CACHE_SERVICE_COUNT_LIMIT);
+            }, self::CACHE_SERVICE_COUNT_TTL);
         }
 
         $filtersWithoutService = new OrderFilter(

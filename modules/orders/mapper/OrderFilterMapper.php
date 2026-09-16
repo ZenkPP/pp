@@ -15,6 +15,8 @@ use yii\web\Request;
 final class OrderFilterMapper
 {
     /**
+     * @param Request $request
+     * @return OrderFilter
      * @throws BadRequestHttpException
      */
     public function map(Request $request): OrderFilter
@@ -28,6 +30,8 @@ final class OrderFilterMapper
     }
 
     /**
+     * @param Request $request
+     * @return OrderStatus|null
      * @throws BadRequestHttpException
      */
     private function getStatus(Request $request): ?OrderStatus
@@ -42,6 +46,8 @@ final class OrderFilterMapper
     }
 
     /**
+     * @param Request $request
+     * @return OrderMode|null
      * @throws BadRequestHttpException
      */
     private function getMode(Request $request): ?OrderMode
@@ -56,6 +62,8 @@ final class OrderFilterMapper
     }
 
     /**
+     * @param Request $request
+     * @return int|null
      * @throws BadRequestHttpException
      */
     private function getService(Request $request): ?int
@@ -69,6 +77,8 @@ final class OrderFilterMapper
     }
 
     /**
+     * @param Request $request
+     * @return OrderSearch|null
      * @throws BadRequestHttpException
      */
     private function getSearch(Request $request): ?OrderSearch
@@ -90,6 +100,9 @@ final class OrderFilterMapper
     }
 
     /**
+     * @param Request $request
+     * @param string $name
+     * @return string|null
      * @throws BadRequestHttpException
      */
     private function getStringQueryParam(Request $request, string $name): ?string
@@ -107,6 +120,9 @@ final class OrderFilterMapper
     }
 
     /**
+     * @param Request $request
+     * @param string $name
+     * @return int|null
      * @throws BadRequestHttpException
      */
     private function getIntegerQueryParam(Request $request, string $name): ?int

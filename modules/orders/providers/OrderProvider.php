@@ -10,17 +10,28 @@ use yii\data\Pagination;
 
 readonly class OrderProvider
 {
+    private const EXPORT_BATCH_SIZE = 1000;
+
+    /**
+     * @param OrderQueryBuilder $orderQueryBuilder
+     */
     public function __construct(
         private OrderQueryBuilder $orderQueryBuilder,
     ) {
     }
 
+    /**
+     * @param OrderFilter $orderFilter
+     * @return int
+     */
     public function countFilteredOrders(OrderFilter $orderFilter): int
     {
         return (int) $this->orderQueryBuilder->getQuery($orderFilter)->count();
     }
 
     /**
+     * @param OrderFilter $orderFilter
+     * @param Pagination $pagination
      * @return array<int, Order>
      */
     public function getOrders(OrderFilter $orderFilter, Pagination $pagination): array
@@ -34,6 +45,7 @@ readonly class OrderProvider
     }
 
     /**
+     * @param OrderFilter $orderFilter
      * @return \Generator<int, Order>
      */
     public function iterateOrders(OrderFilter $orderFilter): \Generator
@@ -41,7 +53,7 @@ readonly class OrderProvider
         $orders = $this->orderQueryBuilder->getQuery($orderFilter)
             ->orderBy(['order.id' => SORT_DESC])
             ->with(['user', 'service'])
-            ->each(1000);
+            ->each(self::EXPORT_BATCH_SIZE);
 
         foreach ($orders as $order) {
             yield $order;

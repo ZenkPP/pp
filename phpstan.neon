@@ -2,14 +2,9 @@ parameters:
     level: 5
 
     paths:
-        - assets
-        - commands
         - config
-        - controllers
-        - mail
         - migrations
         - modules
-        - widgets
 
     dynamicConstantNames:
         - YII_DEBUG
@@ -18,10 +13,7 @@ parameters:
         - YII_ENV_PROD
         - YII_ENV_TEST
 
-    ignoreErrors:
-        -
-            message: '#Call to an undefined static method Yii::t\(\).#'
-            path: modules/orders/services/OrderCsvExporter.php
-
+    bootstrapFiles:
+        - config/phpstan-bootstrap.php
 
     tmpDir: %currentWorkingDirectory%/runtime

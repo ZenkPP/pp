@@ -8,6 +8,10 @@ use modules\orders\models\OrderSearchType;
 
 final readonly class OrderSearch
 {
+    /**
+     * @param string $search
+     * @param OrderSearchType $searchType
+     */
     public function __construct(
         public string $search,
         public OrderSearchType $searchType,

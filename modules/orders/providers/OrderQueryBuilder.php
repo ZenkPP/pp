@@ -12,6 +12,10 @@ use yii\db\ActiveQuery;
 
 class OrderQueryBuilder
 {
+    /**
+     * @param OrderFilter $orderFilter
+     * @return ActiveQuery
+     */
     public function getQuery(OrderFilter $orderFilter): ActiveQuery
     {
         $query = Order::find()
@@ -41,6 +45,11 @@ class OrderQueryBuilder
         return $query;
     }
 
+    /**
+     * @param OrderFilter $orderFilter
+     * @param ActiveQuery $query
+     * @return void
+     */
     private function applyUserNameSearch(OrderFilter $orderFilter, ActiveQuery $query): void
     {
         $words = preg_split('/\s+/', trim($orderFilter->search->search), -1, PREG_SPLIT_NO_EMPTY);

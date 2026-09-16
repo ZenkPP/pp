@@ -25,11 +25,17 @@ use yii\db\ActiveRecord;
  */
 final class Order extends ActiveRecord
 {
+    /**
+     * @return string
+     */
     public static function tableName(): string
     {
         return '{{%orders}}';
     }
 
+    /**
+     * @return array
+     */
     public function rules(): array
     {
         return [
@@ -74,6 +80,9 @@ final class Order extends ActiveRecord
         ];
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getUser(): ActiveQuery
     {
         return $this->hasOne(
@@ -82,6 +91,9 @@ final class Order extends ActiveRecord
         );
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getService(): ActiveQuery
     {
         return $this->hasOne(
@@ -90,6 +102,11 @@ final class Order extends ActiveRecord
         );
     }
 
+    /**
+     * @param bool $insert
+     * @param array $changedAttributes
+     * @return void
+     */
     public function afterSave($insert, $changedAttributes): void
     {
         parent::afterSave($insert, $changedAttributes);
@@ -99,6 +116,9 @@ final class Order extends ActiveRecord
         }
     }
 
+    /**
+     * @return void
+     */
     public function afterDelete(): void
     {
         parent::afterDelete();

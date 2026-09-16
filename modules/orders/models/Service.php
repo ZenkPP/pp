@@ -12,11 +12,17 @@ use yii\db\ActiveRecord;
  */
 final class Service extends ActiveRecord
 {
+    /**
+     * @return string
+     */
     public static function tableName(): string
     {
         return '{{%services}}';
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     public function rules(): array
     {
         return [

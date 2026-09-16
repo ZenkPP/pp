@@ -9,6 +9,12 @@ use modules\orders\models\OrderStatus;
 
 final readonly class OrderFilter
 {
+    /**
+     * @param OrderStatus|null $status
+     * @param int|null $service
+     * @param OrderMode|null $mode
+     * @param OrderSearch|null $search
+     */
     public function __construct(
         public ?OrderStatus $status = null,
         public ?int $service = null,

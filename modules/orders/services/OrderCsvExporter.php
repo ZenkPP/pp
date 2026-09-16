@@ -13,14 +13,17 @@ use yii\base\InvalidConfigException;
 
 final readonly class OrderCsvExporter
 {
+    /**
+     * @param OrderProvider $orderProvider
+     */
     public function __construct(
         private OrderProvider $orderProvider,
     ) {
     }
 
     /**
+     * @param OrderFilter $orderFilter
      * @return \Generator<int, string>
-     *
      * @throws InvalidConfigException
      */
     public function export(OrderFilter $orderFilter): \Generator
@@ -51,6 +54,10 @@ final readonly class OrderCsvExporter
         }
     }
 
+    /**
+     * @param array $columns
+     * @return string
+     */
     private function createCsvLine(array $columns): string
     {
         $stream = fopen('php://temp', 'w+b');
