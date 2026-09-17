@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace modules\orders\providers;
 
-use modules\orders\dto\OrderFilter;
 use modules\orders\models\Order;
+use modules\orders\models\OrdersSearch;
 use modules\orders\models\Service;
 use Yii;
 
@@ -15,27 +15,16 @@ class ServiceProvider
     private const CACHE_SERVICE_COUNT_TTL = 600;
 
     /**
-     * @param OrderQueryBuilder $orderQueryBuilder
-     */
-    public function __construct(
-        private readonly OrderQueryBuilder $orderQueryBuilder,
-    ) {
-    }
-
-    /**
-     * @param OrderFilter $orderFilter
+     * @param OrdersSearch $searchModel
      * @return list<array{id: int, name: string, count: int}>
+     * @throws \InvalidArgumentException
      */
-    public function getServices(OrderFilter $orderFilter): array
+    public function getServices(OrdersSearch $searchModel): array
     {
-        $filtersWithoutService = new OrderFilter(
-            status: $orderFilter->status,
-            service: null,
-            mode: $orderFilter->mode,
-            search: $orderFilter->search,
-        );
+        $filtersWithoutService = clone $searchModel;
+        $filtersWithoutService->service = null;
 
-        $orderCounts = $this->orderQueryBuilder->getQuery($filtersWithoutService)
+        $orderCounts = $filtersWithoutService->getQuery()
             ->select([
                 'service_id' => '[[order.service_id]]',
                 'count' => 'COUNT([[order.id]])',
@@ -59,28 +48,25 @@ class ServiceProvider
     }
 
     /**
-     * @param OrderFilter $orderFilter
+     * @param OrdersSearch $searchModel
      * @return int
+     * @throws \InvalidArgumentException
      */
-    public function countOrdersForServices(OrderFilter $orderFilter): int
+    public function countOrdersForServices(OrdersSearch $searchModel): int
     {
         if (
-            $orderFilter->status === null
-            && $orderFilter->mode === null
-            && $orderFilter->search === null
+            $searchModel->status === null
+            && $searchModel->mode === null
+            && $searchModel->search === null
         ) {
-            return Yii::$app->cache->getOrSet(self::CACHE_SERVICE_COUNT, function () {
-                return Order::find()->count();
+            return (int) Yii::$app->cache->getOrSet(self::CACHE_SERVICE_COUNT, static function (): int {
+                return (int) Order::find()->count();
             }, self::CACHE_SERVICE_COUNT_TTL);
         }
 
-        $filtersWithoutService = new OrderFilter(
-            status: $orderFilter->status,
-            service: null,
-            mode: $orderFilter->mode,
-            search: $orderFilter->search,
-        );
+        $filtersWithoutService = clone $searchModel;
+        $filtersWithoutService->service = null;
 
-        return (int) $this->orderQueryBuilder->getQuery($filtersWithoutService)->count();
+        return (int) $filtersWithoutService->getQuery()->count();
     }
 }

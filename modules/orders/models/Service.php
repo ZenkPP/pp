@@ -21,7 +21,7 @@ final class Service extends ActiveRecord
     }
 
     /**
-     * @return array<array<string, mixed>>
+     * @return array<array<int|string, mixed>>
      */
     public function rules(): array
     {

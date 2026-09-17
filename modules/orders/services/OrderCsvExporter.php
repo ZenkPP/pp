@@ -4,29 +4,20 @@ declare(strict_types=1);
 
 namespace modules\orders\services;
 
-use modules\orders\dto\OrderFilter;
+use modules\orders\models\Order;
 use modules\orders\models\OrderMode;
 use modules\orders\models\OrderStatus;
-use modules\orders\providers\OrderProvider;
 use Yii;
 use yii\base\InvalidConfigException;
 
 final readonly class OrderCsvExporter
 {
     /**
-     * @param OrderProvider $orderProvider
-     */
-    public function __construct(
-        private OrderProvider $orderProvider,
-    ) {
-    }
-
-    /**
-     * @param OrderFilter $orderFilter
+     * @param iterable<Order> $orders
      * @return \Generator<int, string>
      * @throws InvalidConfigException
      */
-    public function export(OrderFilter $orderFilter): \Generator
+    public function export(iterable $orders): \Generator
     {
         yield "\xEF\xBB\xBF";
         yield $this->createCsvLine([
@@ -40,7 +31,7 @@ final readonly class OrderCsvExporter
             Yii::t('orders', 'Created'),
         ]);
 
-        foreach ($this->orderProvider->iterateOrders($orderFilter) as $order) {
+        foreach ($orders as $order) {
             yield $this->createCsvLine([
                 $order->id,
                 $order->user->first_name . ' ' . $order->user->last_name,
