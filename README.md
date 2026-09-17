@@ -12,6 +12,9 @@ docker compose exec php php yii migrate --interactive=0
 
 Приложение будет доступно по адресу [http://localhost:8080](http://localhost:8080). Порт, язык и параметры MySQL задаются в `.env`.
 
+## Выбор языка
+Язык прописывается в переменной `APP_LANGUAGE` файла `.env`
+
 ## Полезные команды
 
 ```bash

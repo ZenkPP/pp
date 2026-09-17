@@ -26,21 +26,21 @@ class ServiceProvider
 
         $orderCounts = $filtersWithoutService->getQuery()
             ->select([
-                'service_id' => '[[order.service_id]]',
-                'count' => 'COUNT([[order.id]])',
+                'service_id' => 'order.service_id',
+                'count' => 'COUNT(order.id)',
             ])
-            ->groupBy('[[order.service_id]]');
+            ->groupBy('order.service_id');
 
         return Service::find()
             ->alias('service')
             ->select([
-                'id' => '[[service.id]]',
-                'name' => '[[service.name]]',
-                'count' => 'COALESCE([[orderCounts.count]], 0)',
+                'id' => 'service.id',
+                'name' => 'service.name',
+                'count' => 'COALESCE(orderCounts.count, 0)',
             ])
             ->leftJoin(
                 ['orderCounts' => $orderCounts],
-                '[[orderCounts.service_id]] = [[service.id]]',
+                'orderCounts.service_id = service.id',
             )
             ->orderBy(['count' => SORT_DESC, 'id' => SORT_ASC])
             ->asArray()

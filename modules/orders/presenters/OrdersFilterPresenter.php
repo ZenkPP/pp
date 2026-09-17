@@ -10,13 +10,10 @@ use modules\orders\models\OrdersSearch;
 use modules\orders\models\OrderStatus;
 use modules\orders\providers\ServiceProvider;
 use Yii;
-use yii\base\InvalidConfigException;
-use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 
-final readonly class OrdersPresenter
+final readonly class OrdersFilterPresenter
 {
-    private const EXPORT_ROUTE = '/orders/order/export';
     private const SEARCH_TYPE_ORDER_ID_LABEL = 'Order ID';
     private const SEARCH_TYPE_LINK_LABEL = 'Link';
     private const SEARCH_TYPE_USERNAME_LABEL = 'Username';
@@ -61,11 +58,7 @@ final readonly class OrdersPresenter
     public function getServiceFilters(OrdersSearch $ordersSearch, string $route): array
     {
         $filters = $ordersSearch->getFilters();
-        $filterParams = array_merge(
-            [$route],
-            $ordersSearch->getSearchParams(),
-            $ordersSearch->getFilterParams(),
-        );
+        $filterParams = array_merge([$route], $ordersSearch->getSearchParams(), $ordersSearch->getFilterParams());
         $serviceFilters = [[
             'id' => null,
             'name' => Yii::t('orders', 'All'),
@@ -120,28 +113,6 @@ final readonly class OrdersPresenter
 
     /**
      * @param OrdersSearch $ordersSearch
-     * @return string
-     */
-    public function getExportUrl(OrdersSearch $ordersSearch): string
-    {
-        return Url::to(array_merge(
-            [self::EXPORT_ROUTE],
-            $ordersSearch->getSearchParams(),
-            $ordersSearch->getFilterParams(),
-        ));
-    }
-
-    /**
-     * @param string $route
-     * @return string
-     */
-    public function getOrdersUrl(string $route): string
-    {
-        return Url::to([$route]);
-    }
-
-    /**
-     * @param OrdersSearch $ordersSearch
      * @param string $route
      * @return array{
      *     action: string,
@@ -173,43 +144,5 @@ final readonly class OrdersPresenter
             'value' => (string) $filters['search'],
             'types' => $searchTypes,
         ];
-    }
-
-    /**
-     * @param ActiveDataProvider $dataProvider
-     * @return list<array{
-     *     id: int,
-     *     userName: string,
-     *     link: string,
-     *     quantity: int,
-     *     serviceId: int,
-     *     serviceName: string,
-     *     status: string,
-     *     mode: string,
-     *     createdDate: string,
-     *     createdTime: string
-     * }>
-     * @throws InvalidConfigException
-     */
-    public function getOrders(ActiveDataProvider $dataProvider): array
-    {
-        $orderRows = [];
-
-        foreach ($dataProvider->getModels() as $order) {
-            $orderRows[] = [
-                'id' => $order->id,
-                'userName' => $order->user->getFullName(),
-                'link' => $order->link,
-                'quantity' => $order->quantity,
-                'serviceId' => $order->service_id,
-                'serviceName' => $order->service->name,
-                'status' => Yii::t('orders', OrderStatus::from($order->status)->name),
-                'mode' => Yii::t('orders', OrderMode::from($order->mode)->name),
-                'createdDate' => Yii::$app->formatter->asDate($order->created_at, 'php:Y-m-d'),
-                'createdTime' => Yii::$app->formatter->asTime($order->created_at, 'php:H:i:s'),
-            ];
-        }
-
-        return $orderRows;
     }
 }

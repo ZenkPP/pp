@@ -135,12 +135,14 @@ final class OrdersSearch extends Model
      */
     public function getQuery(): ActiveQuery
     {
+        $query = Order::find()->alias('order');
+
         if (!$this->validate()) {
-            throw new \InvalidArgumentException(implode(' ', $this->getFirstErrors()));
+            return $query->where('0 = 1');
         }
 
         $status = $this->status === null ? null : OrderStatus::fromString($this->status);
-        $query = Order::find()->alias('order')->andFilterWhere([
+        $query->andFilterWhere([
             'order.status' => $status?->value,
             'order.service_id' => $this->service,
             'order.mode' => $this->mode,
@@ -164,13 +166,13 @@ final class OrdersSearch extends Model
     private function applyUserNameSearch(ActiveQuery $query): void
     {
         $words = preg_split('/\s+/', $this->search, -1, PREG_SPLIT_NO_EMPTY);
-        $query->innerJoin(['user' => User::tableName()], '[[user.id]] = [[order.user_id]]');
+        $query->innerJoin(['user' => User::tableName()], 'user.id = order.user_id');
 
         foreach ($words as $word) {
             $query->andWhere([
                 'or',
-                ['like', '[[user.first_name]]', $word],
-                ['like', '[[user.last_name]]', $word],
+                ['like', 'user.first_name', $word],
+                ['like', 'user.last_name', $word],
             ]);
         }
     }
