@@ -8,7 +8,7 @@ final class m260914_123000_load_order_data extends Migration
 {
     public function safeUp(): void
     {
-        $dumpPath = Yii::getAlias('@app/modules/orders/db/test_db_data.sql');
+        $dumpPath = Yii::getAlias('@app/migrations/data/test_db_data.sql');
         $sql = file_get_contents($dumpPath);
 
         if ($sql === false) {
